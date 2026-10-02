@@ -1,95 +1,131 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Atendente Virtual - Escola</title>
+    <meta name="description" content="Atendente virtual da academia">
+    <title>Atendente Virtual - Academia</title>
 
     <style>
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box; 
+            box-sizing: border-box;
             font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --accent: #ff5a1f;
+            --accent-dark: #d9430e;
+            --bg: #0d0d0f;
+            --panel: #17171a;
+            --panel-light: #202024;
+            --text: #f5f5f5;
+            --muted: #a7a7ad;
+            --border: rgba(255,255,255,0.08);
+            --online: #36d66b;
         }
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #f49c34,#f8c181,#7c4c1c,#747473,#d9d9d9);
+            background:
+                radial-gradient(circle at top left, rgba(255,90,31,0.22), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(255,90,31,0.12), transparent 30%),
+                var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            color: var(--text);
         }
 
+        /* ESTRUTURA */
         .chat-container {
             width: 100%;
             max-width: 430px;
             height: 700px;
-            background: #ffffff;
-            border-radius: 20px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 22px;
             overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
             display: flex;
             flex-direction: column;
         }
 
         /* CABEÇALHO */
-
         .chat-header {
-            background: linear-gradient(135deg, #1565c0, #1976d2);
+            background: linear-gradient(135deg, #111114, #242428);
             color: white;
-            padding: 20px;
+            padding: 18px 20px;
             display: flex;
             align-items: center;
             gap: 14px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .school-icon {
-            width: 48px;
-            height: 48px;
-            background: white;
-            color: #1565c0;
-            border-radius: 50%;
+        .gym-icon {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            background: var(--accent);
+            color: white;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            box-shadow: 0 8px 22px rgba(255, 90, 31, 0.28);
         }
 
         .header-info h2 {
             font-size: 18px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+            letter-spacing: 0.2px;
         }
 
         .status {
-            font-size: 13px;
-            opacity: 0.9;
+            font-size: 12px;
+            color: #d5d5d8;
         }
 
         .online {
             display: inline-block;
             width: 8px;
             height: 8px;
-            background: #4caf50;
+            background: var(--online);
             border-radius: 50%;
             margin-right: 5px;
+            box-shadow: 0 0 8px rgba(54, 214, 107, 0.6);
         }
 
         /* ÁREA DO CHAT */
-
         .chat-messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            background: #f5f7fb;
+            background:
+                linear-gradient(rgba(13,13,15,0.96), rgba(13,13,15,0.96)),
+                radial-gradient(circle at 20% 10%, rgba(255,90,31,0.08), transparent 25%);
+            scrollbar-width: thin;
+            scrollbar-color: #3a3a3f transparent;
         }
 
         .message {
             display: flex;
             margin-bottom: 15px;
+            animation: messageIn 0.22s ease-out;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.bot {
@@ -101,44 +137,55 @@
         }
 
         .message-content {
-            max-width: 78%;
+            max-width: 82%;
             padding: 12px 15px;
-            border-radius: 15px;
+            border-radius: 16px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
         }
 
         .bot .message-content {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: var(--panel-light);
+            color: #eeeeef;
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.16);
         }
 
         .user .message-content {
-            background: #1976d2;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
             color: white;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 5px 16px rgba(255, 90, 31, 0.18);
         }
 
         .time {
             display: block;
             font-size: 10px;
             margin-top: 5px;
-            opacity: 0.6;
+            opacity: 0.55;
+        }
+
+        /* INDICADOR */
+        .typing {
+            display: none;
+            font-size: 12px;
+            color: var(--muted);
+            padding: 0 20px 8px;
+            background: var(--bg);
         }
 
         /* OPÇÕES */
-
         .quick-options {
-            padding: 10px 20px;
-            background: white;
-            border-top: 1px solid #eee;
+            padding: 11px 20px 13px;
+            background: #151518;
+            border-top: 1px solid var(--border);
         }
 
         .quick-options p {
-            font-size: 12px;
-            color: #777;
+            font-size: 11px;
+            color: var(--muted);
             margin-bottom: 8px;
         }
 
@@ -149,446 +196,445 @@
         }
 
         .option {
-            border: 1px solid #1976d2;
-            background: white;
-            color: #1976d2;
+            border: 1px solid rgba(255,90,31,0.55);
+            background: transparent;
+            color: #ff875d;
             padding: 8px 11px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 12px;
-            transition: 0.2s;
+            transition: 0.2s ease;
         }
 
-        .option:hover {
-            background: #1976d2;
+        .option:hover,
+        .option:focus-visible {
+            background: var(--accent);
             color: white;
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            outline: none;
         }
 
         /* CAMPO DE DIGITAÇÃO */
-
         .chat-input {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #eee;
+            padding: 14px 15px;
+            background: #151518;
+            border-top: 1px solid var(--border);
         }
 
         .chat-input input {
             flex: 1;
-            border: none;
+            min-width: 0;
+            border: 1px solid var(--border);
             outline: none;
-            background: #f1f3f6;
+            color: white;
+            background: #222226;
             border-radius: 25px;
             padding: 13px 17px;
             font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .chat-input input::placeholder {
+            color: #85858b;
+        }
+
+        .chat-input input:focus {
+            border-color: rgba(255,90,31,0.65);
+            box-shadow: 0 0 0 3px rgba(255,90,31,0.08);
         }
 
         .send-button {
             width: 45px;
             height: 45px;
+            flex-shrink: 0;
             border: none;
             border-radius: 50%;
-            background: #1976d2;
+            background: var(--accent);
             color: white;
             cursor: pointer;
             font-size: 18px;
-            transition: 0.2s;
+            transition: 0.2s ease;
         }
 
-        .send-button:hover {
-            background: #0d47a1;
+        .send-button:hover,
+        .send-button:focus-visible {
+            background: var(--accent-dark);
             transform: scale(1.05);
+            outline: none;
         }
 
-        /* DIGITANDO */
-
-        .typing {
-            display: none;
-            font-size: 12px;
-            color: #777;
-            padding: 0 20px 8px;
-            background: #f5f7fb;
+        .send-button:active {
+            transform: scale(0.97);
         }
 
         /* RESPONSIVO */
-
         @media (max-width: 500px) {
-
             body {
                 padding: 0;
             }
 
             .chat-container {
                 height: 100vh;
+                max-width: none;
                 border-radius: 0;
+                border-left: 0;
+                border-right: 0;
+            }
+
+            .chat-header {
+                padding: 15px;
+            }
+
+            .chat-messages {
+                padding: 16px;
+            }
+
+            .quick-options {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .message-content {
+                max-width: 88%;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="chat-container">
 
-<div class="chat-container">
+        <!-- CABEÇALHO -->
+        <header class="chat-header">
+            <div class="gym-icon" aria-hidden="true">🏋️</div>
 
-    <!-- CABEÇALHO -->
-    <div class="chat-header">
+            <div class="header-info">
+                <h2>Atendente Virtual</h2>
 
-        <div class="school-icon">
-            𒉭
-        </div>
-
-        <div class="header-info">
-            <h2> Persa </h2>
-
-            <div class="status">
-                <span class="online"></span>
-                Online • nuvora
+                <div class="status">
+                    <span class="online"></span>
+                    Online • Academia
+                </div>
             </div>
-        </div>
+        </header>
 
-    </div>
-
-
-    <!-- MENSAGENS -->
-    <div class="chat-messages" id="chatMessages">
-
-        <div class="message bot">
-
-            <div class="message-content">
-
-                Olá! 👋
-
-                <br><br>
-
-                Seja bem-vindo(a) ao atendimento virtual da nossa escola.
-
-                <br><br>
-
-                Como posso ajudar você?
-
-                <span class="time">16:08</span>
-
+        <!-- MENSAGENS -->
+        <main class="chat-messages" id="chatMessages" aria-live="polite">
+            <div class="message bot">
+                <div class="message-content">
+                    Olá! 👋
+                    <br><br>
+                    Seja bem-vindo(a) à nossa academia!
+                    <br><br>
+                    Posso ajudar você com planos, horários, modalidades, aula experimental e muito mais.
+                    <span class="time">Agora</span>
+                </div>
             </div>
 
-        </div>
-
-
-        <div class="message bot">
-
-            <div class="message-content">
-
-                Você pode perguntar sobre:
-
-                <br><br>
-
-                📚 Cursos e disciplinas<br>
-                📝 Matrículas<br>
-                📅 Horários<br>
-                💰 Mensalidades<br>
-                📍 Localização<br>
-                📞 Contato
-
-                <span class="time">16:08</span>
-
+            <div class="message bot">
+                <div class="message-content">
+                    Você pode perguntar sobre:
+                    <br><br>
+                    🏋️ Planos e mensalidades<br>
+                    🕐 Horários de funcionamento<br>
+                    💪 Modalidades e treinos<br>
+                    👤 Personal Trainer<br>
+                    🎟️ Aula experimental<br>
+                    📍 Localização<br>
+                    📞 Contato
+                    <span class="time">Agora</span>
+                </div>
             </div>
+        </main>
 
+        <!-- INDICADOR -->
+        <div class="typing" id="typing" aria-hidden="true">
+            🤖 Atendente está digitando...
         </div>
 
-    </div>
+        <!-- OPÇÕES -->
+        <section class="quick-options" aria-label="Opções rápidas">
+            <p>Escolha uma opção:</p>
 
+            <div class="options">
+                <button class="option" type="button" onclick="quickMessage('Quero informações sobre os planos')">
+                    🏋️ Planos
+                </button>
 
-    <!-- INDICADOR -->
-    <div class="typing" id="typing">
-        🤖 Atendente está digitando...
-    </div>
+                <button class="option" type="button" onclick="quickMessage('Qual o valor da mensalidade?')">
+                    💰 Mensalidade
+                </button>
 
+                <button class="option" type="button" onclick="quickMessage('Quais são os horários de funcionamento?')">
+                    🕐 Horários
+                </button>
 
-    <!-- OPÇÕES -->
-    <div class="quick-options">
+                <button class="option" type="button" onclick="quickMessage('Quais modalidades vocês oferecem?')">
+                    💪 Modalidades
+                </button>
 
-        <p>Escolha uma opção:</p>
-
-        <div class="options">
-
-            <button class="option" onclick="quickMessage('Quero informações sobre matrícula')">
-                📝 Matrícula
-            </button>
-
-            <button class="option" onclick="quickMessage('Quais cursos estão disponíveis?')">
-                📚 Cursos
-            </button>
-
-            <button class="option" onclick="quickMessage('Quais são os horários das aulas?')">
-                📅 Horários
-            </button>
-
-            <button class="option" onclick="quickMessage('Qual o valor da mensalidade?')">
-                💰 Mensalidade
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- INPUT -->
-    <div class="chat-input">
-
-        <input
-            type="text"
-            id="messageInput"
-            placeholder="Digite sua mensagem..."
-            onkeypress="handleKey(event)"
-        >
-
-        <button class="send-button" onclick="sendMessage()">
-            ➤
-        </button>
-
-    </div>
-
-</div>
-
-
-<script>
-
-    function getTime() {
-
-        const now = new Date();
-
-        return now.toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-
-    }
-
-
-    function addMessage(text, type) {
-
-        const chat = document.getElementById("chatMessages");
-
-        const message = document.createElement("div");
-
-        message.classList.add("message", type);
-
-        message.innerHTML = `
-            <div class="message-content">
-                ${text}
-                <span class="time">${getTime()}</span>
+                <button class="option" type="button" onclick="quickMessage('Gostaria de saber sobre aula experimental')">
+                    🎟️ Experimental
+                </button>
             </div>
-        `;
+        </section>
 
-        chat.appendChild(message);
+        <!-- INPUT -->
+        <form class="chat-input" id="chatForm">
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="Digite sua mensagem..."
+                autocomplete="off"
+                maxlength="500"
+                aria-label="Digite sua mensagem"
+            >
 
-        chat.scrollTop = chat.scrollHeight;
+            <button class="send-button" type="submit" aria-label="Enviar mensagem">
+                ➤
+            </button>
+        </form>
+    </div>
 
-    }
+    <script>
+        /* UTILITÁRIOS */
 
+        function getTime() {
+            const now = new Date();
 
-    function sendMessage() {
-
-        const input = document.getElementById("messageInput");
-
-        const text = input.value.trim();
-
-        if (text === "") {
-            return;
+            return now.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
         }
 
-        addMessage(text, "user");
+        function normalizeText(text) {
+            return text
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[!?.,;:()[\]{}]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
 
-        input.value = "";
+        function containsAny(text, terms) {
+            return terms.some(term => text.includes(term));
+        }
 
-        simulateResponse(text);
+        /* MENSAGENS */
 
-    }
+        function escapeHTML(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
+        function addMessage(text, type, allowHTML = false) {
+            const chat = document.getElementById("chatMessages");
+            const message = document.createElement("div");
+            const content = document.createElement("div");
 
-    function quickMessage(text) {
+            message.classList.add("message", type);
+            content.classList.add("message-content");
 
-        addMessage(text, "user");
-
-        simulateResponse(text);
-
-    }
-
-
-    function simulateResponse(text) {
-
-        const typing = document.getElementById("typing");
-
-        typing.style.display = "block";
-
-        setTimeout(() => {
-
-            typing.style.display = "none";
-
-            let response = "";
-
-            const message = text.toLowerCase();
-
-
-            if (
-                message.includes("matrícula") ||
-                message.includes("matricula")
-            ) {
-
-                response = `
-                    📝 <strong>Matrículas</strong><br><br>
-
-                    Para realizar sua matrícula, é necessário
-                    apresentar os documentos solicitados pela escola.
-
-                    <br><br>
-
-                    Posso informar os documentos necessários ou
-                    encaminhar você para a secretaria.
-                `;
-
+            if (allowHTML) {
+                content.innerHTML = text;
+            } else {
+                content.innerHTML = escapeHTML(text);
             }
 
-            else if (
-                message.includes("curso") ||
-                message.includes("disciplina")
-            ) {
+            const time = document.createElement("span");
+            time.classList.add("time");
+            time.textContent = getTime();
 
-                response = `
-                    📚 <strong>Cursos disponíveis</strong><br><br>
+            content.appendChild(time);
+            message.appendChild(content);
+            chat.appendChild(message);
 
-                    Atualmente temos cursos nas áreas de
-                    Administração, Informática, Tecnologia e
-                    Desenvolvimento Profissional.
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-                    <br><br>
+        /* ENVIO */
 
-                    Digite o nome do curso para receber mais informações.
-                `;
+        function sendMessage() {
+            const input = document.getElementById("messageInput");
+            const text = input.value.trim();
 
+            if (!text) {
+                return;
             }
 
-            else if (
-                message.includes("horário") ||
-                message.includes("horario") ||
-                message.includes("aula")
-            ) {
+            addMessage(text, "user");
+            input.value = "";
+            input.focus();
 
-                response = `
-                    📅 <strong>Horários</strong><br><br>
+            simulateResponse(text);
+        }
 
-                    As aulas acontecem de segunda a sexta-feira.
+        function quickMessage(text) {
+            addMessage(text, "user");
+            simulateResponse(text);
+        }
 
-                    <br><br>
+        /* RESPOSTAS */
 
-                    Manhã: 08:00 às 12:00<br>
-                    Tarde: 13:00 às 17:00<br>
-                    Noite: 19:00 às 22:00
-                `;
+        function simulateResponse(text) {
+            const typing = document.getElementById("typing");
+            typing.style.display = "block";
 
-            }
+            const delay = Math.min(1200, Math.max(500, 650 + text.length * 8));
 
-            else if (
-                message.includes("mensalidade") ||
-                message.includes("preço") ||
-                message.includes("valor")
-            ) {
+            setTimeout(() => {
+                typing.style.display = "none";
 
-                response = `
-                    💰 <strong>Mensalidades</strong><br><br>
+                const message = normalizeText(text);
+                let response;
 
-                    O valor da mensalidade depende do curso
-                    escolhido.
+                if (containsAny(message, [
+                    "oi", "ola", "bom dia", "boa tarde", "boa noite", "e ai"
+                ])) {
+                    response = `
+                        Olá! 😊<br><br>
+                        É um prazer atender você.<br><br>
+                        Posso ajudar com <strong>planos, mensalidades, horários, modalidades,
+                        personal trainer, aula experimental, localização ou contato</strong>.
+                    `;
+                }
 
-                    <br><br>
+                else if (containsAny(message, [
+                    "plano", "planos", "pacote", "pacotes", "plano mensal", "plano anual"
+                ])) {
+                    response = `
+                        🏋️ <strong>Planos da academia</strong><br><br>
+                        Temos opções de planos para diferentes objetivos e necessidades.<br><br>
+                        • Plano mensal: <strong>R$100,00</strong><br>
+                        • Plano trimestral: <strong>R$250,00</strong><br>
+                        • Plano anual: <strong>R$1000,00</strong><br><br>
+                        Entre em contato para confirmar as condições atuais.
+                    `;
+                }
 
-                    Informe o curso que deseja consultar
-                    para receber o valor correspondente.
-                `;
+                else if (containsAny(message, [
+                    "mensalidade", "mensal", "preco", "valor", "quanto custa",
+                    "quanto e", "quanto vou pagar", "custa"
+                ])) {
+                    response = `
+                        💰 <strong>Mensalidades</strong><br><br>
+                        Os valores dependem do plano escolhido.<br><br>
+                        Plano mensal: <strong>R$100,00</strong><br>
+                        Plano trimestral: <strong>250,00</strong><br>
+                        Plano anual: <strong>1000,00</strong><br><br>
+                        Posso ajudar você a escolher um plano de acordo com o que procura.
+                    `;
+                }
 
-            }
+                else if (containsAny(message, [
+                    "horario", "horarios", "funciona", "abre", "fecha",
+                    "funcionamento", "que horas"
+                ])) {
+                    response = `
+                        🕐 <strong>Horários de funcionamento</strong><br><br>
+                        Segunda a sexta: <strong>8:00 até 22:00</strong><br>
+                        Sábado: <strong>9:00 até 18:00</strong><br>
+                        Domingo: <strong>9:00 até 18:00</strong><br><br>
+                        Os horários podem variar em feriados.
+                    `;
+                }
 
-            else if (
-                message.includes("local") ||
-                message.includes("endereço") ||
-                message.includes("endereco")
-            ) {
+                else if (containsAny(message, [
+                    "modalidade", "modalidades", "musculacao", "cardio",
+                    "funcional", "treino", "exercicio", "exercicios"
+                ])) {
+                    response = `
+                        💪 <strong>Modalidades e treinos</strong><br><br>
+                        Nossa academia pode oferecer opções como:<br><br>
+                        • 🏋️ Musculação<br>
+                        • 🏃 Cardio<br>
+                        • 🔥 Treinamento funcional<br>
+                        • 👤 Acompanhamento personalizado<br><br>
+                        Confirme a disponibilidade das modalidades na academia.
+                    `;
+                }
 
-                response = `
-                    📍 <strong>Localização</strong><br><br>
+                else if (containsAny(message, [
+                    "personal", "personal trainer", "treinador", "professor",
+                    "acompanhamento", "acompanhamento personalizado"
+                ])) {
+                    response = `
+                        👤 <strong>Personal Trainer</strong><br><br>
+                        O acompanhamento personalizado pode ajudar a organizar
+                        seus treinos de acordo com seus objetivos.<br><br>
+                        Disponibilidade e valores: <strong>[INFORMAR]</strong>.
+                    `;
+                }
 
-                    Nossa escola está localizada na região central
-                    da cidade.
+                else if (containsAny(message, [
+                    "experimental", "aula experimental", "experimentar",
+                    "testar", "conhecer a academia"
+                ])) {
+                    response = `
+                        🎟️ <strong>Aula experimental</strong><br><br>
+                        Para verificar a disponibilidade de uma aula experimental,
+                        entre em contato com nossa equipe.<br><br>
+                        Condições: <strong>[INFORMAR COMO FUNCIONA]</strong>.
+                    `;
+                }
 
-                    <br><br>
+                else if (containsAny(message, [
+                    "local", "localizacao", "endereco", "onde fica",
+                    "fica onde"
+                ])) {
+                    response = `
+                        📍 <strong>Localização</strong><br><br>
+                        Estamos localizados em:<br>
+                        <strong>[INFORMAR ENDEREÇO DA ACADEMIA]</strong><br><br>
+                        Para orientações de chegada, entre em contato conosco.
+                    `;
+                }
 
-                    Para visualizar o endereço completo,
-                    entre em contato com nossa secretaria.
-                `;
+                else if (containsAny(message, [
+                    "telefone", "contato", "whatsapp", "falar com alguem",
+                    "numero"
+                ])) {
+                    response = `
+                        📞 <strong>Contato</strong><br><br>
+                        WhatsApp: <strong>[INFORMAR WHATSAPP]</strong><br>
+                        Telefone: <strong>[INFORMAR TELEFONE]</strong><br><br>
+                        Nossa equipe poderá ajudar com dúvidas e informações.
+                    `;
+                }
 
-            }
+                else {
+                    response = `
+                        🤖 <strong>Entendi sua mensagem.</strong><br><br>
+                        Ainda não tenho uma resposta específica para essa pergunta.<br><br>
+                        Você pode perguntar sobre:<br>
+                        🏋️ Planos<br>
+                        💰 Mensalidades<br>
+                        🕐 Horários<br>
+                        💪 Modalidades<br>
+                        👤 Personal Trainer<br>
+                        🎟️ Aula experimental<br>
+                        📍 Localização<br>
+                        📞 Contato
+                    `;
+                }
 
-            else if (
-                message.includes("oi") ||
-                message.includes("olá") ||
-                message.includes("ola") ||
-                message.includes("bom dia") ||
-                message.includes("boa tarde") ||
-                message.includes("boa noite")
-            ) {
+                addMessage(response, "bot", true);
+            }, delay);
+        }
 
-                response = `
-                    Olá! 😊
+        /* TECLADO / FORMULÁRIO */
 
-                    <br><br>
-
-                    É um prazer atender você.
-
-                    <br><br>
-
-                    Como posso ajudar?
-                `;
-
-            }
-
-            else {
-
-                response = `
-                    🤖 Entendi sua mensagem.
-
-                    <br><br>
-
-                    Ainda estou aprendendo a responder essa
-                    pergunta.
-
-                    <br><br>
-
-                    Você pode perguntar sobre
-                    <strong>matrícula, cursos, horários,
-                    mensalidades ou localização</strong>.
-                `;
-
-            }
-
-            addMessage(response, "bot");
-
-        }, 1200);
-
-    }
-
-
-    function handleKey(event) {
-
-        if (event.key === "Enter") {
-
+        document.getElementById("chatForm").addEventListener("submit", function(event) {
+            event.preventDefault();
             sendMessage();
-
-        }
-
-    }
-
-</script>
-
+        });
+    </script>
 </body>
 </html>
